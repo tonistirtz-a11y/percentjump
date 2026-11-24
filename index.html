@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Percent Logo Bakery: Decimal to Percent (Unit 3)</title>
+<meta name="description" content="Brownie Math Unit 3 game: put the percent logo on. Count brownies, make 2 jumps bigger, and change decimals and fractions to percents.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --brown:#6B3E26; --ink:#3A2418; --soft:#5A4234; --teal:#1C7A71; --frost:#7FD1C7;
+    --cream:#FDF8F0; --tan:#F4E8D6; --line:#E3CDB5; --mint:#E3F4F1; --gold:#F4C95D; --red:#B0473A;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--cream);color:var(--ink);font-family:'Comic Neue',Verdana,sans-serif}
+  body{font-size:20px;line-height:1.45}
+  button{font-family:inherit;font-size:20px;cursor:pointer}
+  header{background:var(--brown);color:var(--cream);padding:14px 16px}
+  .hwrap{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  header h1{margin:0;font-size:28px}
+  header .sub{color:#9FE0D7;font-weight:700;font-size:15px;letter-spacing:.5px}
+  .iconbtn{background:transparent;border:2px solid var(--line);color:var(--cream);border-radius:12px;padding:6px 12px;font-size:16px}
+  nav{background:var(--tan);border-bottom:2px solid var(--line)}
+  .tabs{max-width:1100px;margin:0 auto;display:flex;gap:6px;padding:8px 16px;overflow-x:auto}
+  .tab{background:transparent;border:none;border-radius:12px;padding:10px 16px;font-weight:700;color:var(--brown);white-space:nowrap}
+  .tab[aria-selected="true"]{background:var(--brown);color:var(--cream)}
+  main{max-width:1100px;margin:0 auto;padding:20px 16px 48px}
+  h2{color:var(--brown);margin:4px 0 10px;font-size:30px}
+  .lead{color:var(--soft);margin:0 0 16px}
+  .panel{display:none}.panel.on{display:block}
+  .stage{display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:1 1 340px;min-width:280px}
+  .card{background:#fff8ee;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin-bottom:14px}
+  .say{background:var(--mint);border-left:6px solid var(--teal);border-radius:12px;padding:14px 16px;font-size:22px;margin-bottom:14px}
+  .big{font-size:34px;font-weight:700;color:var(--brown)}
+  .btn{background:var(--teal);color:#fff;border:none;border-radius:14px;padding:12px 22px;font-weight:700}
+  .btn.alt{background:var(--tan);color:var(--brown);border:2px solid var(--line)}
+  .btn:disabled{opacity:.45;cursor:default}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  .pickers{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .pick{background:#fff;border:2px solid var(--line);border-radius:12px;padding:8px 14px;font-weight:700;color:var(--brown);font-size:22px}
+  .pick[aria-pressed="true"]{background:var(--brown);color:var(--cream);border-color:var(--brown)}
+  .choices{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:6px 0 12px}
+  .choices.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .choices.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .choice{background:#fff;border:3px solid var(--line);border-radius:14px;padding:10px 6px;font-size:24px;font-weight:700;color:var(--ink)}
+  .choice:disabled{cursor:default}
+  .choice.right{border-color:var(--teal);background:#c9efe9}
+  .choice.wrong{border-color:var(--red);background:#f6dfe4}
+  .label{font-weight:700;color:var(--teal);font-size:17px;letter-spacing:.5px;text-transform:uppercase}
+  .feedback{border-radius:14px;padding:12px 16px;margin-top:10px;font-size:21px;display:none}
+  .feedback.ok{display:block;background:#d8f2ee;border:2px solid var(--teal)}
+  .feedback.no{display:block;background:#f9e6e2;border:2px solid var(--red)}
+  .score{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:12px;font-weight:700;color:var(--soft)}
+  .bar{flex:1 1 200px;height:14px;background:var(--line);border-radius:8px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--teal);width:0;transition:width .3s}
+  .stars{color:#c99a1d;letter-spacing:2px}
+  .done{text-align:center;padding:24px}
+  .done .big{font-size:44px}
+  footer{max-width:1100px;margin:0 auto;padding:16px;color:#8A7466;font-size:15px;border-top:2px solid var(--line)}
+  .tip{background:#fdf0c8;border:2px solid var(--gold);border-radius:14px;padding:12px 16px;margin-top:14px;font-size:18px}
+  .hide{display:none!important}
+
+  
+  /* ---- Unit 3 ---- */
+  .cakebox{display:inline-block;background:var(--ink);padding:3px;border-radius:6px}
+  .cake{display:grid;grid-template-rows:repeat(10,1fr);grid-auto-flow:column;grid-auto-columns:1fr;column-gap:3px;row-gap:1px;
+        width:min(380px,86vw);aspect-ratio:1/1;background:var(--ink)}
+  .cake .b{background:#fff;border:none;padding:0;margin:0;min-width:0;min-height:0}
+  .cake .b.f{background:var(--frost)}
+  .cake .b.n{display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--ink)}
+  .cake.click .b{cursor:pointer}
+  .cake.click .b:hover{outline:3px solid var(--gold);outline-offset:-3px}
+  .cake.sm{width:150px}
+  .cake .b.hi{background:var(--gold)}
+  .bigdec{font-size:76px;font-weight:700;color:var(--ink);line-height:1.1}
+  .words{font-size:24px;color:var(--brown);font-weight:700}
+  .logo{color:var(--red)}
+  .stamp{display:inline-block;animation:stamp .5s ease-out}
+  @keyframes stamp{0%{transform:scale(2.4);opacity:0}70%{transform:scale(.9);opacity:1}100%{transform:scale(1)}}
+  .numin{font-family:inherit;font-size:30px;font-weight:700;width:120px;padding:6px 10px;border:3px solid var(--line);border-radius:12px;text-align:center;color:var(--ink)}
+  .stepbox{border-left:6px solid var(--line);padding-left:12px;margin-bottom:14px}
+  .stepbox.on{border-left-color:var(--teal)}
+  .stepbox.off{opacity:.4;pointer-events:none}
+  .q{font-size:23px;font-weight:700;color:var(--ink);margin-bottom:6px}
+  /* jump machine */
+  .chart{position:relative;height:250px;margin:70px 0 10px}
+  .pcol{position:absolute;top:0;bottom:0;width:13.6%;border-radius:14px;text-align:center;padding-top:6px}
+  .pcol .h{font-size:15px;font-weight:700;color:var(--brown);line-height:1.15}
+  .pcol .s{font-size:12px;color:var(--soft)}
+  .pcol.w{background:var(--tan)} .pcol.p{background:var(--mint)} .pcol.p .h{color:var(--teal)}
+  .dot{position:absolute;bottom:40px;width:16px;height:16px;border-radius:50%;background:var(--ink);transform:translateX(-50%);transition:opacity .4s}
+  .dig{position:absolute;bottom:22px;font-size:84px;font-weight:700;transform:translateX(-50%);transition:left .7s ease-in-out,opacity .4s;color:var(--teal)}
+  .dig.z{color:#B8860B}
+  .dig.hop{animation:hop .7s ease-in-out}
+  @keyframes hop{0%{bottom:22px}50%{bottom:170px}100%{bottom:22px}}
+  .pct{position:absolute;bottom:22px;font-size:84px;font-weight:700;color:var(--red);transform:translateX(-50%);animation:stampc .5s ease-out}
+  @keyframes stampc{0%{transform:translateX(-50%) scale(2.4);opacity:0}70%{transform:translateX(-50%) scale(.9);opacity:1}100%{transform:translateX(-50%) scale(1)}}
+  .arc{position:absolute;top:-62px;height:56px;border:4px solid var(--red);border-bottom:none;border-radius:60px 60px 0 0;transform:translateX(-50%)}
+  .arc span{position:absolute;top:-28px;left:50%;transform:translateX(-50%);font-size:16px;font-weight:700;color:var(--red);white-space:nowrap}
+  .tchart{border-collapse:collapse;font-size:22px;font-weight:700}
+  .tchart td,.tchart th{border:2px solid var(--line);padding:4px 16px;text-align:center}
+  .tchart th{background:var(--tan);color:var(--brown)}
+  @media (max-width:560px){ .choices{grid-template-columns:repeat(2,minmax(0,1fr))} h2{font-size:26px} .dig,.pct{font-size:54px} .pcol .h{font-size:12px} .pcol .s{display:none} .bigdec{font-size:58px} .chart{height:200px} }
+</style>
+</head>
+<body>
+<header><div class="hwrap">
+  <div><div class="sub">BROWNIE MATH · UNIT 3</div><h1>Percent Logo Bakery: Putting the Logo On</h1></div>
+  <button class="iconbtn" id="soundBtn" aria-pressed="true">Sound: on</button>
+</div></header>
+<nav><div class="tabs" role="tablist">
+  <button class="tab" role="tab" data-p="hm" aria-selected="true">1. HM Brownies?</button>
+  <button class="tab" role="tab" data-p="jump" aria-selected="false">2. Jump Machine</button>
+  <button class="tab" role="tab" data-p="quiz" aria-selected="false">3. Logo On! Challenge</button>
+  <button class="tab" role="tab" data-p="frac" aria-selected="false">4. Fraction to Percent</button>
+</div></nav>
+
+<main>
+<!-- ================= 1. HM BROWNIES ================= -->
+<section class="panel on" id="hm">
+  <h2>HM Brownies? Frost it, count it, stamp the logo</h2>
+  <p class="lead">Percent means brownies. To change a decimal to a percent, ask one question: <b>How many brownies is that?</b></p>
+  <div class="pickers" id="hPick"></div>
+  <div class="stage">
+    <div class="col">
+      <div class="card" style="text-align:center"><div class="bigdec" id="hDec"></div><div class="words" id="hWords"></div></div>
+      <div class="stepbox on" id="hS1"><div class="q">1. Frost it on the cake.</div>
+        <div style="color:var(--soft);font-size:18px">Tap a brownie to frost up to it. Each column is a Kit Kat (10 brownies).</div>
+        <div class="row" style="margin-top:8px"><button class="btn" id="hCheck">Check my frosting</button><button class="btn alt" id="hClear">Clear</button></div></div>
+      <div class="stepbox off" id="hS2"><div class="q">2. HM brownies is that?</div>
+        <div class="row"><input class="numin" id="hIn" inputmode="decimal" aria-label="How many brownies"><span style="font-size:24px;font-weight:700">brownies</span><button class="btn" id="hCount">Check</button></div></div>
+      <div class="stepbox off" id="hS3"><div class="q">3. Stick the percent logo on!</div><button class="btn" id="hLogo">Logo on!</button>
+        <div class="big" id="hAns" style="margin-top:10px;font-size:46px"></div></div>
+      <div class="feedback" id="hFb"></div>
+      <div class="row"><button class="btn hide" id="hNext">Next decimal</button></div>
+    </div>
+    <div class="col" style="text-align:center">
+      <div class="label">Brownie cake (100 brownies = 100%)</div>
+      <div class="cakebox"><div class="cake click" id="hCake"></div></div>
+      <div class="words" id="hCountTxt" style="margin-top:8px">0 brownies frosted</div>
+    </div>
+  </div>
+  <div class="tip"><b>Parent tip:</b> Have your child read the decimal out loud by place value (“13 hundredths,” never “point one three”) and say “HM brownies?” before counting.</div>
+</section>
+
+<!-- ================= 2. JUMP MACHINE ================= -->
+<section class="panel" id="jump">
+  <h2>Jump Machine: 2 jumps bigger, then the logo</h2>
+  <p class="lead">Multiplying by <b>100%</b> makes every digit jump <b>2 places bigger</b> and sticks the percent logo on. 100% is one whole cake, which is just 1, so the frosting never changes.</p>
+  <div class="pickers" id="jPick"></div>
+  <div class="card" style="text-align:center"><span class="bigdec" id="jDec" style="font-size:60px"></span> <span class="words" id="jWords"></span></div>
+  <div class="chart" id="jChart"></div>
+  <div class="row"><button class="btn" id="jJump">Jump!</button><button class="btn" id="jLogo" style="background:var(--red)">Logo on!</button><button class="btn alt" id="jReset">Start over</button><button class="btn hide" id="jNext">Next decimal</button></div>
+  <div class="feedback" id="jFb"></div>
+  <div class="tip"><b>Try this:</b> Press <b>Logo on!</b> too early and see what happens. Each jump makes the number 10 times bigger. Two jumps bigger is × 100.</div>
+</section>
+
+<!-- ================= 3. QUIZ ================= -->
+<section class="panel" id="quiz">
+  <h2>Logo On! Challenge</h2>
+  <p class="lead">Pick the percent that is the <b>same frosting</b> as the decimal. Watch out for the tricky answers!</p>
+  <div class="pickers" id="qPick"></div>
+  <div class="score"><span>Question <span id="qNum">1</span> of 10</span><div class="bar"><i id="qBar"></i></div><span class="stars" id="qStars"></span></div>
+  <div id="qGame">
+    <div class="card" style="text-align:center"><div class="label" id="qLevel"></div><div class="bigdec" id="qDec"></div><div class="words" id="qWords"></div></div>
+    <div class="choices" id="qCh"></div>
+    <div class="row"><button class="btn hide" id="qNext">Next</button></div>
+    <div class="feedback" id="qFb"></div>
+  </div>
+  <div id="qDone" class="done hide"></div>
+</section>
+
+<!-- ================= 4. FRACTION TO PERCENT ================= -->
+<section class="panel" id="frac">
+  <h2>Fraction to Percent</h2>
+  <p class="lead">If the denominator is <b>percent friendly</b> (a factor of 100), make it a brownie cake. If not, use the <b>3-parter</b>: divide, × 100%, logo on.</p>
+  <div class="stage">
+    <div class="col">
+      <div class="score"><span>Fraction <span id="fNum">1</span> of 8</span><div class="bar"><i id="fBar"></i></div><span class="stars" id="fStars"></span></div>
+      <div id="fGame">
+        <div class="card" style="text-align:center"><div class="bigdec" id="fFrac"></div></div>
+        <div id="fSteps"></div>
+        <div class="feedback" id="fFb"></div>
+        <div class="row"><button class="btn hide" id="fNext">Next fraction</button></div>
+      </div>
+      <div id="fDone" class="done hide"></div>
+    </div>
+    <div class="col">
+      <div class="label">T-chart: factors of 100</div>
+      <table class="tchart"><tr><th>factor</th><th>factor</th></tr><tr><td>1</td><td>100</td></tr><tr><td>2</td><td>50</td></tr><tr><td>4</td><td>25</td></tr><tr><td>5</td><td>20</td></tr><tr><td>10</td><td>10</td></tr></table>
+      <div class="tip">Every number in the T-chart is a <b>percent-friendly</b> denominator. Repeating decimals are rounded to the nearest thousandth (1/3 ≈ 0.333 = 33.3%).</div>
+    </div>
+  </div>
+</section>
+</main>
+<footer>Brownie Math by Toni Stirtz, M.Ed., LDT, CALT · Smart &amp; Special Teaching · smartandspecialteaching.com</footer>
+
+<script>
+const $=id=>document.getElementById(id);
+let soundOn=true, actx=null;
+function tone(f,d,type='sine',v=.15){ if(!soundOn) return; try{actx=actx||new (window.AudioContext||window.webkitAudioContext)();
+  const o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.value=f;g.gain.value=v;o.connect(g);g.connect(actx.destination);
+  o.start();g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.stop(actx.currentTime+d);}catch(e){} }
+const yay=()=>{tone(660,.15);setTimeout(()=>tone(880,.25),120);};
+const oops=()=>tone(220,.3,'triangle',.12);
+const pop=()=>tone(520,.08,'sine',.08);
+const boing=()=>{tone(300,.12);setTimeout(()=>tone(450,.12),90);};
+$('soundBtn').onclick=e=>{soundOn=!soundOn;e.target.textContent='Sound: '+(soundOn?'on':'off');e.target.setAttribute('aria-pressed',soundOn);};
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>showTab(t.dataset.p));
+function showTab(p){document.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x.dataset.p===p));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.toggle('on',x.id===p)); window.scrollTo(0,0);}
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+const fb=(el,ok,html)=>{el.className='feedback '+(ok?'ok':'no');el.innerHTML=html;};
+const LOGO='<span class="logo">%</span>';
+
+// ---------- exact decimal helpers (strings, no rounding errors) ----------
+function shift(dec, k){ // move digits k places bigger (k may be negative)
+  let [w,f=''] = dec.split('.');
+  let digits = w + f, pt = w.length + k;
+  while (pt > digits.length) digits += '0';
+  while (pt < 0) { digits = '0' + digits; pt++; }
+  let a = digits.slice(0, pt).replace(/^0+(?=\d)/,'') || '0', b = digits.slice(pt).replace(/0+$/,'');
+  return b ? a + '.' + b : a;
+}
+const toPct = d => shift(d, 2);
+const PL = ['','tenth','hundredth','thousandth'];
+function words(d){
+  let [w,f=''] = d.split('.'); f = f.replace(/0+$/,'');
+  const n = f ? parseInt(f,10) : 0, unit = PL[f.length] + (n===1?'':'s');
+  if (!f) return `${w} whole cake${w==='1'?'':'s'}`;
+  if (w==='0') return `${n} ${unit}`;
+  return `${w} and ${n} ${unit}`;
+}
+function pctWords(p){ return p + '%'; }
+
+// ================= 1. HM BROWNIES =================
+const HM = ['0.4','0.13','0.08','0.7','0.46','0.25','0.9','0.05','0.62','0.3','0.01','0.87'];
+let hI = 0, hFrost = 0, hTarget = 0;
+function buildCake(el, n, click, nums){
+  el.innerHTML='';
+  for(let k=0;k<100;k++){ const b=document.createElement(click?'button':'div'); b.className='b'+(k<n?' f':'');
+    if(click){ b.setAttribute('aria-label',`Kit Kat ${Math.floor(k/10)+1}, brownie ${k%10+1}`); b.onclick=()=>{ hFrost = (hFrost===k+1)? k : k+1; pop(); paintH(); }; }
+    el.appendChild(b); }
+}
+function paintH(){ [...$('hCake').children].forEach((b,k)=>b.classList.toggle('f',k<hFrost));
+  $('hCountTxt').textContent = `${hFrost} brownie${hFrost===1?'':'s'} frosted`; }
+function hLoad(i){
+  hI=i; hFrost=0; const d=HM[i]; hTarget=Math.round(parseFloat(d)*100);
+  $('hDec').textContent=d; $('hWords').textContent=words(d);
+  ['hS2','hS3'].forEach(x=>$(x).className='stepbox off'); $('hS1').className='stepbox on';
+  $('hIn').value=''; $('hAns').innerHTML=''; $('hFb').className='feedback'; $('hNext').classList.add('hide'); $('hCheck').disabled=false; $('hClear').disabled=false;
+  buildCake($('hCake'),0,true); $('hCake').classList.add('click'); paintH();
+  [...$('hPick').children].forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+}
+HM.forEach((d,i)=>{const b=document.createElement('button');b.className='pick';b.textContent=d;b.onclick=()=>hLoad(i);$('hPick').appendChild(b);});
+$('hClear').onclick=()=>{hFrost=0;paintH();};
+$('hCheck').onclick=()=>{
+  const d=HM[hI], kk=Math.floor(hTarget/10), br=hTarget%10;
+  const how = kk&&br ? `${kk} Kit Kat${kk>1?'s':''} and ${br} more brownie${br>1?'s':''}` : kk ? `${kk} whole Kit Kat${kk>1?'s':''}` : `just ${br} brownie${br>1?'s':''} (no whole Kit Kat)`;
+  if(hFrost===hTarget){ pop(); fb($('hFb'),true,`Yes! <b>${words(d)}</b> is ${how}.`);
+    $('hS1').className='stepbox'; $('hCake').classList.remove('click'); [...$('hCake').children].forEach(b=>b.disabled=true);
+    $('hS2').className='stepbox on'; $('hIn').focus(); }
+  else { oops(); fb($('hFb'),false,`Not quite. <b>${words(d)}</b> is ${how}. You frosted ${hFrost} brownies. Try again!`); }
+};
+function hCountCheck(){
+  const v=$('hIn').value.trim(), d=HM[hI];
+  if(v===String(hTarget)){ pop(); fb($('hFb'),true,`Right! <b>${words(d)}</b> = <b>${hTarget} brownies</b>.`);
+    $('hS2').className='stepbox'; $('hS3').className='stepbox on'; }
+  else { oops(); fb($('hFb'),false,`Count again. Each Kit Kat column is 10 brownies. Count the full columns by tens, then count the extra brownies by ones.`); }
+}
+$('hCount').onclick=hCountCheck; $('hIn').onkeydown=e=>{if(e.key==='Enter')hCountCheck();};
+$('hLogo').onclick=()=>{ const d=HM[hI]; yay();
+  $('hAns').innerHTML=`${d} = ${hTarget}<span class="logo stamp">%</span>`;
+  fb($('hFb'),true,`<b>${words(d)}</b> is <b>${hTarget} brownies</b>, so it is <b>${hTarget}%</b>. Same frosting, new code!`);
+  $('hS3').className='stepbox'; $('hLogo').disabled=true; $('hNext').classList.remove('hide'); };
+$('hNext').onclick=()=>{ $('hLogo').disabled=false; hLoad((hI+1)%HM.length); };
+
+// ================= 2. JUMP MACHINE =================
+const JM = ['0.4','0.13','0.08','0.7','0.35','0.06','0.125','0.375','1.2','3.75'];
+const COLS = [['hundreds',''],['tens',''],['ones','whole cakes'],['tenths','Kit Kats'],['hundredths','brownies'],['thousandths','slivers']];
+const cx = c => (c*14.4 + (c>=3?8.4:0) + 6.8);   // % center of column c (0..5)
+let jI=0, jumps=0, jDigs=[], jBusy=false, jDone=false;
+function jLoad(i){
+  jI=i; jumps=0; jDone=false; const d=JM[i];
+  $('jDec').textContent=d; $('jWords').textContent='= '+words(d);
+  const ch=$('jChart'); ch.innerHTML='';
+  COLS.forEach(([h,s],c)=>{const e=document.createElement('div');e.className='pcol '+(c>=3?'p':'w');e.style.left=(cx(c)-6.8)+'%';
+    e.innerHTML=`<div class="h">${h}</div><div class="s">${s}</div>`;ch.appendChild(e);});
+  const dot=document.createElement('div');dot.className='dot';dot.id='jDot';dot.style.left=(cx(2)+7.7)+'%';ch.appendChild(dot);
+  let [w,f=''] = d.split('.');
+  jDigs=[];
+  w.split('').forEach((ch2,k)=>jDigs.push({ch:ch2,col:2-(w.length-1-k)}));
+  f.split('').forEach((ch2,k)=>jDigs.push({ch:ch2,col:3+k}));
+  jDigs.forEach(g=>{const e=document.createElement('div');e.className='dig';e.textContent=g.ch;e.style.left=cx(g.col)+'%';
+    if(g.col<=2 && g.ch==='0') e.style.color='var(--ink)'; g.el=e; ch.appendChild(e);});
+  $('jFb').className='feedback'; $('jNext').classList.add('hide'); $('jJump').disabled=false; $('jLogo').disabled=false;
+  [...$('jPick').children].forEach((b,k)=>b.setAttribute('aria-pressed',k===i));
+}
+JM.forEach((d,i)=>{const b=document.createElement('button');b.className='pick';b.textContent=d;b.onclick=()=>jLoad(i);$('jPick').appendChild(b);});
+function addArc(fromCol,label){ const a=document.createElement('div');a.className='arc';
+  const x1=cx(fromCol),x2=cx(fromCol-1); a.style.left=((x1+x2)/2)+'%'; a.style.width=(x1-x2)+'%'; a.innerHTML=`<span>${label}</span>`; $('jChart').appendChild(a); }
+$('jJump').onclick=()=>{
+  if(jBusy||jDone) return;
+  if(jumps>=2){ oops(); fb($('jFb'),false,`Whoa, too many jumps! Percent is only <b>2 jumps bigger</b> (× 100). A third jump would be × 1,000.`); return; }
+  jBusy=true; jumps++; boing();
+  const lead = jDigs.find(g=>g.ch!=='0') || jDigs[0];
+  addArc(lead.col, 'jump '+jumps);
+  jDigs.forEach(g=>{g.col--; g.el.classList.remove('hop'); void g.el.offsetWidth; g.el.classList.add('hop'); g.el.style.left=cx(g.col)+'%';});
+  setTimeout(()=>{ jBusy=false;
+    if(jumps===2){ tidy(); fb($('jFb'),true,`Two jumps bigger! Now stick the percent logo on.`); }
+    else fb($('jFb'),true,`Jump 1: the number is 10 times bigger. One more jump!`); },720);
+};
+function tidy(){ // hide leading zeros, fill empty place-holders, hide point if nothing after it
+  const occ = jDigs.map(g=>g.col);
+  const firstNZ = jDigs.find(g=>g.ch!=='0');
+  // leading zero in ones place when first non-zero digit is right of the point (e.g. 0.5% cases) stays; otherwise hide zeros left of first non-zero
+  jDigs.forEach(g=>{ if(g.ch==='0' && g.col<firstNZ.col && !(g.col===2 && firstNZ.col>2)) g.el.style.opacity=0; });
+  for(let c=firstNZ.col+1;c<=2;c++) if(!occ.includes(c)){ const e=document.createElement('div');e.className='dig z';e.textContent='0';e.style.left=cx(c)+'%';e.style.opacity=0;$('jChart').appendChild(e);
+    jDigs.push({ch:'0',col:c,el:e,fill:true}); setTimeout(()=>e.style.opacity=1,30); }
+  const after = jDigs.some(g=>g.col>=3 && g.ch!=='0');
+  jDigs.forEach(g=>{ if(g.col>=3 && g.ch==='0') g.el.style.opacity=0; });
+  if(!after) $('jDot').style.opacity=0;
+}
+$('jLogo').onclick=()=>{
+  if(jBusy||jDone) return;
+  const d=JM[jI];
+  if(jumps<2){ oops(); const wrong = shift(d, jumps);
+    fb($('jFb'),false,`Not yet! That would say <b>${wrong}%</b>. But ${words(d)} is <b>${toPct(d)} brownies</b>, not ${wrong}. Make <b>2 jumps</b> first.`); return; }
+  jDone=true; yay();
+  const vis = jDigs.filter(g=>g.el.style.opacity!=='0').map(g=>g.col);
+  const last = Math.max(...vis);
+  const e=document.createElement('div'); e.className='pct'; e.textContent='%'; e.style.left=(cx(last)+8)+'%'; $('jChart').appendChild(e);
+  const p=toPct(d);
+  fb($('jFb'),true,`<b>${d} × 100% = ${p}%</b>. ${words(d)} is ${p} brownies: <b>${p}%</b>. Same frosting, new code!`);
+  $('jJump').disabled=true; $('jLogo').disabled=true; $('jNext').classList.remove('hide');
+};
+$('jReset').onclick=()=>jLoad(jI);
+$('jNext').onclick=()=>jLoad((jI+1)%JM.length);
+
+// ================= 3. QUIZ =================
+const LV = {
+  1: {name:'Level 1 · Tenths and hundredths', pool:['0.2','0.5','0.8','0.6','0.15','0.34','0.72','0.99','0.03','0.06','0.09','0.41','0.58','0.1','0.27','0.04']},
+  2: {name:'Level 2 · Slivers and whole cakes', pool:['0.125','0.375','0.625','0.875','0.333','0.667','0.005','1.5','2.25','1','3','1.75','0.045','4.1']},
+  3: {name:'Level 3 · Mixed', pool:['0.7','0.08','0.25','0.125','1.2','0.09','0.666','0.5','2.5','0.03','0.875','0.45','0.002','3.4']},
+};
+let qL=1, qList=[], qI=0, qScore=0;
+function distractors(d){
+  const p=toPct(d), s=new Set([p+'%']);
+  [shift(d,1)+'%', shift(d,0).replace(/^0\./,'').replace(/^0+(?=\d)/,'')+'%', shift(d,-2)+'%', p, shift(d,3)+'%'].forEach(x=>{ if(s.size<4) s.add(x); });
+  return shuffle([...s]);
+}
+const WHY = (d,choice)=>{
+  const p=toPct(d);
+  if(choice===shift(d,1)+'%') return `That is only <b>1 jump</b>. Percent is 2 jumps bigger.`;
+  if(choice===shift(d,-2)+'%') return `Those jumps went the wrong way! Putting the logo on makes the digits 2 jumps <b>bigger</b>.`;
+  if(choice===p) return `Same digits, but no logo! Without the percent logo, ${p} means ${p} whole cake${p==='1'?'':'s'}.`;
+  if(choice===shift(d,3)+'%') return `That is 3 jumps. Percent is only 2 jumps bigger.`;
+  return `Those are the digits without any jumps. ${words(d)} is ${p} brownies.`;
+};
+function qStart(l){ qL=l; qList=shuffle(LV[l].pool).slice(0,10); qI=0; qScore=0; $('qDone').classList.add('hide'); $('qGame').classList.remove('hide');
+  [...$('qPick').children].forEach((b,k)=>b.setAttribute('aria-pressed',k+1===l)); qShow(); }
+function qShow(){
+  const d=qList[qI]; $('qNum').textContent=qI+1; $('qBar').style.width=(qI*10)+'%'; $('qStars').textContent='★'.repeat(qScore);
+  $('qLevel').textContent=LV[qL].name; $('qDec').textContent=d; $('qWords').textContent=words(d);
+  $('qFb').className='feedback'; $('qNext').classList.add('hide');
+  const box=$('qCh'); box.innerHTML=''; let tries=0;
+  distractors(d).forEach(v=>{const b=document.createElement('button');b.className='choice';b.innerHTML=v.replace('%',LOGO);
+    b.onclick=()=>{ const p=toPct(d)+'%';
+      if(v===p){ b.classList.add('right'); [...box.children].forEach(c=>c.disabled=true); if(!tries)qScore++; yay();
+        fb($('qFb'),true,`Yes! <b>${words(d)}</b> × 100% = <b>${p}</b>. 2 jumps bigger, logo on.`); $('qNext').classList.remove('hide'); }
+      else { b.classList.add('wrong'); b.disabled=true; tries++; oops(); fb($('qFb'),false,WHY(d,v)+' Try again!'); } };
+    box.appendChild(b);});
+}
+$('qNext').onclick=()=>{ qI++; if(qI<10) qShow(); else {
+  $('qBar').style.width='100%'; $('qGame').classList.add('hide'); const D=$('qDone'); D.classList.remove('hide');
+  D.innerHTML=`<div class="big">${qScore} out of 10 on the first try!</div><div class="stars" style="font-size:40px">${'★'.repeat(qScore)}</div>
+   <p>${qScore>=9?'Bakery master! Try the next level.':qScore>=7?'Great work! Play again to get 9 or 10.':'Go back to HM Brownies? and frost a few more cakes, then try again.'}</p>
+   <div class="row" style="justify-content:center"><button class="btn" onclick="qStart(${qL})">Play again</button>${qL<3?`<button class="btn alt" onclick="qStart(${qL+1})">Next level</button>`:''}</div>`; yay(); } };
+[1,2,3].forEach(l=>{const b=document.createElement('button');b.className='pick';b.textContent='Level '+l;b.onclick=()=>qStart(l);$('qPick').appendChild(b);});
+
+// ================= 4. FRACTION TO PERCENT =================
+const FR = [[1,4],[3,5],[7,10],[11,20],[6,25],[23,50],[9,20],[8,25],[1,2],[3,4],[1,8],[3,8],[5,8],[7,8],[1,3],[2,3]];
+const FRIEND = [1,2,4,5,10,20,25,50,100];
+let fList=[], fI=0, fScore=0, fMiss=false;
+function decOf(n,d){ return (Math.round(n/d*1000)/1000).toFixed(3).replace(/0+$/,'').replace(/\.$/,''); }
+function fStart(){ const a=shuffle(FR.slice(0,10)).slice(0,5), b=shuffle(FR.slice(10)).slice(0,3); fList=shuffle(a.concat(b)); fI=0; fScore=0;
+  $('fDone').classList.add('hide'); $('fGame').classList.remove('hide'); fShow(); }
+function step(q, opts, correct, onRight, whyWrong){
+  const w=document.createElement('div'); w.className='stepbox on'; w.innerHTML=`<div class="q">${q}</div>`;
+  const box=document.createElement('div'); box.className='choices'+(opts.length===2?' two':''); w.appendChild(box);
+  [...$('fSteps').children].forEach(x=>x.className='stepbox'); $('fSteps').appendChild(w);
+  opts.forEach(v=>{const b=document.createElement('button');b.className='choice';b.innerHTML=String(v).replace('%',LOGO);
+    b.onclick=()=>{ if(String(v)===String(correct)){ b.classList.add('right'); [...box.children].forEach(c=>c.disabled=true); pop(); $('fFb').className='feedback'; onRight(); }
+      else { b.classList.add('wrong'); b.disabled=true; fMiss=true; oops(); fb($('fFb'),false,whyWrong(v)); } };
+    box.appendChild(b);});
+}
+function fShow(){
+  const [n,d]=fList[fI]; fMiss=false; $('fNum').textContent=fI+1; $('fBar').style.width=(fI/8*100)+'%'; $('fStars').textContent='★'.repeat(fScore);
+  $('fFrac').innerHTML=`${n}/${d}`; $('fSteps').innerHTML=''; $('fFb').className='feedback'; $('fNext').classList.add('hide');
+  const friendly=FRIEND.includes(d);
+  step(`Is ${d} a percent-friendly denominator (a factor of 100)?`, ['Yes','No'], friendly?'Yes':'No', ()=>{
+    if(friendly){ const k=100/d;
+      step(`${d} × ? = 100`, shuffle([k].concat([k*2,k+5,10,20,50].filter(x=>x!==k)).slice(0,4)), k, ()=>{
+        const top=n*k;
+        step(`Do the same to the top: ${n} × ${k} = ?`, shuffle([...new Set([top, top+k, n+k, top*10])]).slice(0,4), top, ()=>fWin(`${n}/${d} = ${top}/100 = <b>${top}%</b>. ${top} brownies!`),
+          v=>`Multiply the top by the same number: ${n} × ${k}.`);
+      }, v=>`Look at the T-chart: ${d} and ${k} are partners that make 100.`);
+    } else { const dec=decOf(n,d), p=toPct(dec);
+      step(`Part 1: Divide. ${n} ÷ ${d} = ?`, shuffle([...new Set([dec, shift(dec,1), shift(dec,-1), (n/d>0.5? '0.5':'0.25')])]).slice(0,4), dec, ()=>{
+        step(`Parts 2 and 3: ${dec} × 100% = ? (2 jumps bigger, logo on)`, shuffle([...new Set([p+'%', shift(dec,1)+'%', dec+'%', shift(dec,3)+'%'])]), p+'%', ()=>fWin(`${n}/${d} ${d%3===0?'≈':'='} ${dec} = <b>${p}%</b>.${d%3===0?' (rounded to the nearest thousandth)':''}`),
+          v=>WHY(dec, v));
+      }, v=>`Divide top ÷ bottom with long division: ${n} cake${n>1?'s':''} shared by ${d} kids. Go to slivers if you need to.`);
+    }
+  }, v=> friendly? `${d} IS in the T-chart. It is a factor of 100.` : `${d} is not in the T-chart. ${d} doesn't go into 100 evenly, so use the 3-parter.`);
+}
+function fWin(msg){ if(!fMiss) fScore++; yay(); fb($('fFb'),true,'Yes! '+msg); $('fNext').classList.remove('hide'); $('fStars').textContent='★'.repeat(fScore); }
+$('fNext').onclick=()=>{ fI++; if(fI<8) fShow(); else { $('fBar').style.width='100%'; $('fGame').classList.add('hide'); const D=$('fDone'); D.classList.remove('hide');
+  D.innerHTML=`<div class="big">${fScore} out of 8 with no mistakes!</div><div class="stars" style="font-size:40px">${'★'.repeat(fScore)}</div><button class="btn" onclick="fStart()">Play again</button>`; yay(); } };
+
+hLoad(0); jLoad(0); qStart(1); fStart();
+</script>
+</body>
+</html>
